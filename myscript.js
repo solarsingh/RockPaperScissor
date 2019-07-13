@@ -19,18 +19,6 @@ function computerPlay(){
     }
 }
 
-function playerPlay(){
-    let playerInput=window.prompt("What is your Play?");
-    let playerSelection=playerInput.toLowerCase();
-
-    if (playerSelection!="rock" && playerSelection!="paper" && playerSelection!="scissor"){
-        let playerInput=window.prompt("Please Enter a Valid Input");
-        let playerSelection=playerInput.toLowerCase();
-    }
-    return playerSelection;
-}
-
-
 function playRound(playerSelection, computerSelection){
 
     if(playerSelection=="rock" && computerSelection=="paper"){
@@ -75,23 +63,29 @@ function keepScore(playerSelection, computerSelection){
 
     if(playerSelection=="rock" && computerSelection=="paper"){
         computerWin=1;
+        playerWin=0;
     }
     else if(playerSelection=="paper" && computerSelection=="rock"){
         playerWin=1;
+        computerWin=0;
     }
 
     else if(playerSelection=="paper" && computerSelection=="scissor"){
         computerWin=1;
+        playerWin=0;
     }
     else if(playerSelection=="scissor" && computerSelection=="paper"){
         playerWin=1;
+        computerWin=0;
     }
 
     else if(playerSelection=="rock" && computerSelection=="scissor"){
         playerWin=1;
+        computerWin=0;
     }
     else if(playerSelection=="scissor" && computerSelection=="rock"){
         computerWin=1;
+        playerWin=0;
     }
 
     else if(playerSelection=="rock" && computerSelection=="rock"){
@@ -111,24 +105,74 @@ function keepScore(playerSelection, computerSelection){
     
 }
 
-function clearcontent(elementID)
-{
-    document.getElementById(elementID).innerHTML = "";
+function elementChild(){
+    let div = document.querySelector('.result');
+    let elm = div.firstElementChild;
+    return elm;
 }
 
 function result(playerSelection, computerSelection){
-    const c = document.querySelector('.result');
-    const content = document.createElement('div');
-    content.classList.add('content');
-    content.textContent = playRound(playerSelection, computerSelection);
-    c.appendChild(content);
+    const div = document.querySelector('.result');
+
+    let check = elementChild();
+
+    if(check == null){
+        let rslt = document.createElement('div');
+        rslt.classList.add('newDiv');
+        rslt.textContent = playRound(playerSelection, computerSelection);
+        div.appendChild(rslt);
+    }
+    else{
+        let oldResult = div.firstElementChild;
+        div.removeChild(oldResult);
+
+        let rslt = document.createElement('div');
+        rslt.classList.add('newDiv');
+        rslt.textContent = playRound(playerSelection, computerSelection);
+        div.appendChild(rslt);
+    }
+}
+
+let computerScore = 0;
+let playerScore = 0;
+let rounds=0;
+
+function scoreListner(playerSelection, computerSelection){
+    let score=keepScore(playerSelection, computerSelection);
+    
+    rounds= rounds+1;
+    console.log(score[0]);
+    console.log(score[1]);
+    
+    if (score[0]==1 && score[1]==0){
+        playerScore = playerScore+1;
+    }
+    if (score[0]==0 && score[1]==1){
+        computerScore = computerScore+1;
+    }
+
+    if (rounds == 5){
+        const div = document.querySelector('.result');
+        let oldResult = div.firstElementChild;
+        div.removeChild(oldResult);
+
+        let finalRslt = document.createElement('div');
+        finalRslt.classList.add('newDiv');
+        finalRslt.textContent = "Your Score is:" + playerScore + "\n" + "Computer Score is:" + computerScore;
+        div.appendChild(finalRslt);
+        
+        rounds = 0;
+        playerScore = 0;
+        computerScore = 0;
+    }
 }
 
 let rockBtn = document.querySelector('#rock');
     rockBtn.addEventListener('click', () => {
     playerSelection = "rock";
-    computerSelection = computerPlay();
+    computerSelection = computerPlay();  
     result(playerSelection, computerSelection);
+    scoreListner(playerSelection, computerSelection);
 });
 
 let paperBtn = document.querySelector('#paper');
@@ -136,6 +180,7 @@ let paperBtn = document.querySelector('#paper');
     playerSelection = "paper";
     computerSelection = computerPlay();
     result(playerSelection, computerSelection);
+    scoreListner(playerSelection, computerSelection);
 });
 
 let scissorBtn = document.querySelector('#scissor');
@@ -143,7 +188,9 @@ let scissorBtn = document.querySelector('#scissor');
     playerSelection = "scissor";
     computerSelection = computerPlay();
     result(playerSelection, computerSelection);
+    scoreListner(playerSelection, computerSelection);
 });
+
 
 
 
